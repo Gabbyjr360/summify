@@ -1,12 +1,12 @@
-from openai import OpenAI
+from groq import Groq
 import json
 import os
 
 # Use mock AI mode if API key not set
-USE_MOCK = not os.getenv("OPENAI_API_KEY")
+USE_MOCK = not os.getenv("GROQ_API_KEY")
 
 if not USE_MOCK:
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 else:
     client = None
 
@@ -41,16 +41,10 @@ def _generate_summary(text):
     if USE_MOCK:
         return "This document provides important information and key concepts. The main ideas include critical points that should be understood. Overall, this material covers essential aspects of the topic in detail. Key takeaways are highlighted throughout for easy reference and learning."
     
-    prompt = f"""
-    Provide a clear, concise summary (150-250 words) of the following document:
-    
-    {text[:3000]}
-    
-    Focus on main ideas and key information. Be direct and informative.
-    """
+    prompt = "Provide a clear, concise summary (150-250 words) of the following document:\n\n" + text[:3000] + "\n\nFocus on main ideas and key information. Be direct and informative."
     
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=400
@@ -70,18 +64,10 @@ def _generate_insights(text):
             "Advanced consideration for deeper learning"
         ]
     
-    prompt = f"""
-    Extract 5-7 important key insights or bullet points from this document:
-    
-    {text[:3000]}
-    
-    Format as a JSON array of strings. Each point should be a single, clear sentence.
-    Return ONLY valid JSON, no other text.
-    Example: ["Point 1", "Point 2", "Point 3"]
-    """
+    prompt = "Extract 5-7 important key insights or bullet points from this document:\n\n" + text[:3000] + "\n\nFormat as a JSON array of strings. Each point should be a single, clear sentence. Return ONLY valid JSON array, no other text."
     
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=500
@@ -105,18 +91,10 @@ def _generate_flashcards(text):
             {"question": "What should be remembered most?", "answer": "The key takeaway is that this information provides valuable insights for learning and professional development."}
         ]
     
-    prompt = f"""
-    Create 5 educational flashcards based on this document:
-    
-    {text[:3000]}
-    
-    Return as JSON array with objects containing "question" and "answer" keys.
-    Format: [{"question": "Q1?", "answer": "A1"}, ...]
-    Return ONLY valid JSON, no other text.
-    """
+    prompt = "Create 5 educational flashcards based on this document:\n\n" + text[:3000] + "\n\nReturn as JSON array with objects containing question and answer keys. Return ONLY valid JSON array, no other text."
     
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=600
@@ -143,18 +121,10 @@ def _generate_questions(text):
             "How can someone get started with applying this information?"
         ]
     
-    prompt = f"""
-    Generate 5 thoughtful questions that someone might ask about this document:
-    
-    {text[:3000]}
-    
-    Return as JSON array of question strings.
-    Format: ["Question 1?", "Question 2?", ...]
-    Return ONLY valid JSON, no other text.
-    """
+    prompt = "Generate 5 thoughtful questions that someone might ask about this document:\n\n" + text[:3000] + "\n\nReturn as JSON array of question strings. Return ONLY valid JSON array, no other text."
     
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=500
@@ -177,18 +147,10 @@ def _generate_action_points(text):
             {"action": "Explore Further", "description": "Research related topics to deepen understanding and expand knowledge."}
         ]
     
-    prompt = f"""
-    Extract 4-5 practical action points or takeaways from this document:
-    
-    {text[:3000]}
-    
-    Return as JSON array with objects containing "action" and "description" keys.
-    Format: [{"action": "Action 1", "description": "Why"}, ...]
-    Return ONLY valid JSON, no other text.
-    """
+    prompt = "Extract 4-5 practical action points or takeaways from this document:\n\n" + text[:3000] + "\n\nReturn as JSON array with objects containing action and description keys. Return ONLY valid JSON array, no other text."
     
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         max_tokens=500
