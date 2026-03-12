@@ -20,11 +20,24 @@ def _get_client():
     
     try:
         from groq import Groq
-        _client = Groq(api_key=api_key)
+        import httpx
+        # Create a custom HTTP client without proxies to avoid compatibility issues
+        http_client = httpx.Client(
+            proxies=None,
+            timeout=30.0,
+        )
+        _client = Groq(api_key=api_key, http_client=http_client)
         return _client
     except Exception as e:
-        print(f"Warning: Could not initialize Groq client: {e}")
-        return None
+        print(f"Warning: Could not initialize Groq client with custom client: {e}")
+        try:
+            # Fallback to default initialization
+            from groq import Groq
+            _client = Groq(api_key=api_key)
+            return _client
+        except Exception as e2:
+            print(f"Warning: Could not initialize Groq client: {e2}")
+            return None
 
 def generate_study_material(text):
     """Generate a complete Smart Summary Pack from document text."""
