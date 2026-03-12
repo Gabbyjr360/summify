@@ -102,6 +102,7 @@ def _generate_insights(text):
         return ["Unable to generate insights at this time."]
 
 def _generate_flashcards(text):
+    """Generate learning flashcards."""
     client = _get_client()
     if not client:
         return [
@@ -126,13 +127,10 @@ def _generate_flashcards(text):
         return flashcards if isinstance(flashcards, list) else [flashcards]
     except Exception as e:
         print(f"Error in flashcard generation: {e}")
-        return [{"question": "Unable to generate flashcards", "answer": "Please try again"}
-    return flashcards if isinstance(flashcards, list) else [flashcards]
+        return [{"question": "Unable to generate flashcards", "answer": "Please try again"}]
 
 def _generate_questions(text):
     """Generate useful questions about the document."""
-    if USE_MOCK:
-        return [
     client = _get_client()
     if not client:
         return [
@@ -157,9 +155,10 @@ def _generate_questions(text):
         return questions if isinstance(questions, list) else [str(questions)]
     except Exception as e:
         print(f"Error in questions generation: {e}")
-        return ["Unable to generate questions at this time."
+        return ["Unable to generate questions at this time."]
+
+def _generate_action_points(text):
     """Generate action points and takeaways."""
-    if USE_MOCK:
     client = _get_client()
     if not client:
         return [
@@ -183,4 +182,4 @@ def _generate_questions(text):
         return actions if isinstance(actions, list) else [actions]
     except Exception as e:
         print(f"Error in action points generation: {e}")
-        return [
+        return []
